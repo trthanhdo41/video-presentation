@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Screen Video</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .video1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .video2 {
+            position: absolute;
+            top: 41px;
+            left: 0px;
+            width: 100%;
+            height: 90%;
+            object-fit: cover;
+        }
+        .hidden-button {
+            position: absolute;
+            top: 79%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px; /* Kích thước của vùng nhấp */
+            height: 50px; /* Kích thước của vùng nhấp */
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            opacity: 0;
+        }
+        .back-button {
+            position: absolute;
+            top: 746px;
+            left: 159px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <video id="video1" class="video1" autoplay loop muted playsinline>
+        <source src="poster.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <button class="hidden-button" onclick="playVideo2(event)"></button>
+    <button class="back-button" style="display:none;" onclick="playVideo1()">Quay lại</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/party-js@latest/bundle/party.min.js"></script>
+    <script>
+        function playVideo2(event) {
+            var videoElement = document.getElementById('video1');
+            var backButton = document.querySelector('.back-button');
+            
+            videoElement.className = 'video2';
+            videoElement.src = 'video2.mp4';
+            videoElement.load();
+            videoElement.play();
+            videoElement.loop = false;
+
+            backButton.style.display = 'block';
+
+            videoElement.addEventListener('ended', function() {
+                setTimeout(function() {
+                    videoElement.currentTime = 0;
+                    videoElement.play();
+                }, 10000); // Lặp lại sau 10 giây
+            });
+
+            // Tạo hiệu ứng pháo giấy liên tục trong 2 giây
+            var endTime = Date.now() + 2000;
+            function confettiEffect() {
+                if (Date.now() < endTime) {
+                    party.confetti(videoElement, {
+                        count: party.variation.range(50, 100),
+                        spread: 360
+                    });
+                    requestAnimationFrame(confettiEffect);
+                }
+            }
+            confettiEffect();
+        }
+
+        function playVideo1() {
+            var videoElement = document.getElementById('video1');
+            var backButton = document.querySelector('.back-button');
+
+            videoElement.className = 'video1';
+            videoElement.src = 'poster.mp4';
+            videoElement.load();
+            videoElement.play();
+            videoElement.loop = true;
+
+            backButton.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
